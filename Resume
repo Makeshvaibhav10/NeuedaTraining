@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Resume</title>
+
+    <style>
+
+        body {
+
+            font-family: Arial, sans-serif;
+
+            margin: 30px;
+
+        }
+
+        .container {
+
+            display: flex;
+
+            justify-content: space-between;
+
+        }
+
+        .left {
+
+            width: 48%;
+
+        }
+
+        .right {
+
+            width: 48%;
+
+            text-align: center;
+
+        }
+
+        .section {
+
+            margin-bottom: 20px;
+
+        }
+
+        table, th, td {
+
+            border: 1px solid black;
+
+            border-collapse: collapse;
+
+            padding: 4px;
+
+            text-align: center;
+
+        }
+
+        .photo {
+
+            width: 100px;
+
+            height: 120px;
+
+            border: 2px solid black;
+
+            display: inline-block;
+
+            margin-top: 20px;
+
+            line-height: 120px;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h2>HTML: <br>Problem Statement-1: Create your resume page as per the format shown in the figure</h2>
+
+    <h2 style="text-align:center;">Resume</h2>
+
+    <div class="container">
+
+        <div class="left">
+
+            <div class="section">
+
+                <strong>Work experience</strong><br>
+
+                ◦ XYZ Ltd – 4 years<br>
+
+                ◦ ABC Multimedia – 2 years
+
+            </div>
+
+            <div class="section">
+
+                <strong>Skill Set:</strong><br>
+
+                <u>Operating Systems</u><br>
+
+                Windows<br>
+
+                Linux<br><br>
+
+                <u>Languages Known</u><br>
+
+                C, C++<br>
+
+                Java<br>
+
+                HTML
+
+            </div>
+
+        </div>
+
+        <div class="right">
+
+            <strong>ABC XYZ</strong><br>
+
+            LMN St, 30th Main,<br>
+
+            1st Cross, J.P. Nagar (7th),<br>
+
+            B’lore – 560078<br>
+
+            Mob: +91-1234567890<br>
+
+            Email: abc@abc.com
+
+            <div class="photo">
+
+                Photo
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="section">
+
+        <strong>Educational Qualifications:</strong><br><br>
+
+        <table style="width:100%;">
+
+            <tr>
+
+                <th>Qualification</th>
+
+                <th>Institute</th>
+
+                <th>University/Board</th>
+
+                <th>Year of Passing</th>
+
+                <th>Marks (%)</th>
+
+            </tr>
+
+            <tr>
+
+                <td>BE (CSE)</td>
+
+                <td>REC</td>
+
+                <td>VTU</td>
+
+                <td>2004</td>
+
+                <td>79%</td>
+
+            </tr>
+
+            <tr>
+
+                <td>PUC</td>
+
+                <td>XYZ</td>
+
+                <td>ICE</td>
+
+                <td>2000</td>
+
+                <td>88%</td>
+
+            </tr>
+
+            <tr>
+
+                <td>SSLC</td>
+
+                <td>ABC</td>
+
+                <td>ICE</td>
+
+                <td>1998</td>
+
+                <td>90%</td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+</body>
+
+</html>

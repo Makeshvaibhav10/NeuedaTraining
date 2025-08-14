@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Product Management</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    input {
+      margin: 5px;
+      padding: 5px;
+    }
+    button {
+      margin: 5px;
+      padding: 5px 10px;
+    }
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 8px;
+    }
+    table {
+      margin-top: 15px;
+    }
+    .required::after {
+      content: " *";
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <div>
+    <label class="required">Id:</label>
+    <input type="text" id="productId"><br>
+
+    <label class="required">Name:</label>
+    <input type="text" id="productName"><br>
+
+    <label class="required">qty:</label>
+    <input type="number" id="productQty"><br>
+
+    <label class="required">price:</label>
+    <input type="number" id="productPrice"><br>
+
+    <button onclick="addProduct()">Add new product</button>
+    <button onclick="deleteProduct()">Delete product</button>
+    <button onclick="updateProduct()">Update product</button>
+  </div>
+
+  <br>
+
+  <div>
+    <label>Search :</label>
+    <input type="text" id="searchInput" onkeyup="searchProduct()">
+    <button onclick="searchProduct()">Search</button>
+  </div>
+
+  <br>
+
+  <table id="productTable">
+    <thead>
+      <tr>
+        <th>Product Id</th>
+        <th>Name</th>
+        <th>Quantity</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>111</td>
+        <td>chair</td>
+        <td>34</td>
+        <td>3000</td>
+      </tr>
+      <tr>
+        <td>112</td>
+        <td>table</td>
+        <td>45</td>
+        <td>7000</td>
+      </tr>
+      <tr>
+        <td>113</td>
+        <td>shelf</td>
+        <td>55</td>
+        <td>5000</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    function addProduct() {
+      const id = document.getElementById('productId').value;
+      const name = document.getElementById('productName').value;
+      const qty = document.getElementById('productQty').value;
+      const price = document.getElementById('productPrice').value;
+
+      if (!id || !name || !qty || !price) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      const table = document.getElementById('productTable').getElementsByTagName('tbody')[0];
+      const newRow = table.insertRow();
+
+      newRow.innerHTML = `
+        <td>${id}</td>
+        <td>${name}</td>
+        <td>${qty}</td>
+        <td>${price}</td>
+      `;
+      clearFields();
+    }
+
+    function deleteProduct() {
+      const id = document.getElementById('productId').value;
+      const table = document.getElementById('productTable').getElementsByTagName('tbody')[0];
+      for (let i = 0; i < table.rows.length; i++) {
+        if (table.rows[i].cells[0].innerText === id) {
+          table.deleteRow(i);
+          clearFields();
+          return;
+        }
+      }
+      alert("Product not found!");
+    }
+
+    function updateProduct() {
+      const id = document.getElementById('productId').value;
+      const name = document.getElementById('productName').value;
+      const qty = document.getElementById('productQty').value;
+      const price = document.getElementById('productPrice').value;
+
+      const table = document.getElementById('productTable').getElementsByTagName('tbody')[0];
+      for (let i = 0; i < table.rows.length; i++) {
+        if (table.rows[i].cells[0].innerText === id) {
+          table.rows[i].cells[1].innerText = name;
+          table.rows[i].cells[2].innerText = qty;
+          table.rows[i].cells[3].innerText = price;
+          clearFields();
+          return;
+        }
+      }
+      alert("Product not found!");
+    }
+
+    function searchProduct() {
+      const filter = document.getElementById('searchInput').value.toLowerCase();
+      const table = document.getElementById('productTable');
+      const tr = table.getElementsByTagName("tr");
+
+      for (let i = 1; i < tr.length; i++) {
+        const rowText = tr[i].textContent.toLowerCase();
+        tr[i].style.display = rowText.includes(filter) ? "" : "none";
+      }
+    }
+
+    function clearFields() {
+      document.getElementById('productId').value = "";
+      document.getElementById('productName').value = "";
+      document.getElementById('productQty').value = "";
+      document.getElementById('productPrice').value = "";
+    }
+  </script>
+
+</body>
+</html>

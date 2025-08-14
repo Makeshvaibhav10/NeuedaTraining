@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>Stock Trading Dashboard</title>
+
+  <style>
+
+    * {
+
+      box-sizing: border-box;
+
+      font-family: 'Segoe UI', sans-serif;
+
+    }
+
+    body {
+
+      margin: 0;
+
+      background-color: #f2f4f8;
+
+    }
+
+    header {
+
+      background-color: #003B71;
+
+      color: white;
+
+      padding: 20px;
+
+      text-align: center;
+
+      font-size: 1.8rem;
+
+    }
+
+    .dashboard {
+
+      max-width: 1200px;
+
+      margin: 0 auto;
+
+      padding: 20px;
+
+      padding-bottom: 80px; /* room for news bar */
+
+    }
+
+    .grid-container {
+
+      display: grid;
+
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+
+      gap: 20px;
+
+    }
+
+    .card {
+
+      background-color: white;
+
+      border-radius: 12px;
+
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+      padding: 20px;
+
+    }
+
+    .card h2 {
+
+      color: #003B71;
+
+      margin-bottom: 16px;
+
+    }
+
+    form {
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 10px;
+
+    }
+
+    input, select, button {
+
+      padding: 10px;
+
+      border: 1px solid #ccc;
+
+      border-radius: 8px;
+
+      font-size: 1rem;
+
+    }
+
+    button {
+
+      background-color: #0072CE;
+
+      color: white;
+
+      cursor: pointer;
+
+      transition: background 0.3s;
+
+    }
+
+    button:hover {
+
+      background-color: #005A9E;
+
+    }
+
+    .results {
+
+      margin-top: 10px;
+
+      font-size: 0.95rem;
+
+      color: #003B71;
+
+      font-weight: bold;
+
+    }
+
+    /* News Ticker */
+
+    #news-bar {
+
+      position: fixed;
+
+      bottom: 0;
+
+      width: 100%;
+
+      background-color: #003B71;
+
+      color: white;
+
+      overflow: hidden;
+
+      white-space: nowrap;
+
+      padding: 10px 0;
+
+      font-size: 1rem;
+
+      z-index: 1000;
+
+    }
+
+    #news-text {
+
+      display: inline-block;
+
+      padding-left: 100%;
+
+      animation: scroll-left 30s linear infinite;
+
+    }
+
+    @keyframes scroll-left {
+
+      0% {
+
+        transform: translateX(0%);
+
+      }
+
+      100% {
+
+        transform: translateX(-100%);
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div class="dashboard">
+
+    <header>
+
+      <h1>Stock Trading Dashboard</h1>
+
+    </header>
+
+    <div class="grid-container">
+
+      <!-- Place Order Panel -->
+
+      <section class="card">
+
+        <h2>Place Order</h2>
+
+        <form id="placeOrderForm">
+
+          <input type="text" name="symbol" placeholder="Stock Symbol" required />
+
+          <select name="orderType" required>
+
+            <option value="BUY">BUY</option>
+
+            <option value="SELL">SELL</option>
+
+          </select>
+
+          <input type="number" name="quantity" placeholder="Quantity" min="1" required />
+
+          <input type="number" name="price" placeholder="Price" step="0.01" min="0.01" required />
+
+          <button type="submit">Place Order</button>
+
+        </form>
+
+      </section>
+
+      <!-- Execute Order Panel -->
+
+      <section class="card">
+
+        <h2>Execute Order</h2>
+
+        <form id="executeOrderForm">
+
+          <input type="text" name="symbol" placeholder="Stock Symbol" required />
+
+          <button type="submit">Execute Next Pending Order</button>
+
+        </form>
+
+      </section>
+
+      <!-- Cancel Order Panel -->
+
+      <section class="card">
+
+        <h2>Cancel Order</h2>
+
+        <form id="cancelOrderForm">
+
+          <input type="text" name="symbol" placeholder="Stock Symbol" required />
+
+          <input type="number" name="orderId" placeholder="Order ID" required />
+
+          <button type="submit">Cancel Order</button>
+
+        </form>
+
+      </section>
+
+      <!-- Portfolio Summary Panel -->
+
+      <section class="card">
+
+        <h2>Get Portfolio Summary</h2>
+
+        <form id="portfolioSummaryForm">
+
+          <input type="text" name="symbol" placeholder="Stock Symbol" required />
+
+          <button type="submit">Get Summary</button>
+
+        </form>
+
+        <div class="results" id="summaryResults">Summary will appear here</div>
+
+      </section>
+
+      <!-- Snapshot Panel -->
+
+      <section class="card">
+
+        <h2>Portfolio Snapshot</h2>
+
+        <button id="snapshotButton">Calculate Snapshot</button>
+
+        <div class="results" id="snapshotResults">Snapshot will appear here</div>
+
+      </section>
+
+    </div>
+
+  </div>
+
+  <!-- News Ticker -->
+
+  <div id="news-bar">
+
+    <div id="news-text">Loading financial news...</div>
+
+  </div>
+
+  <!-- Marketaux Script -->
+
+<script>
+
+async function loadRSSNews() {
+
+  const newsTextEl = document.getElementById('news-text');
+
+  const rssUrl = encodeURIComponent('https://news.google.com/rss/search?q=finance&hl=en-US&gl=US&ceid=US:en');
+
+  const proxyUrl = `https://api.allorigins.win/raw?url=${rssUrl}`;
+
+  try {
+
+    const res = await fetch(proxyUrl);
+
+    const text = await res.text();
+
+    const parser = new DOMParser();
+
+    const xml = parser.parseFromString(text, "application/xml");
+
+    const items = xml.querySelectorAll("item");
+
+    const headlines = Array.from(items).slice(0, 10).map(i => i.querySelector("title").textContent).join(" • ");
+
+    newsTextEl.textContent = headlines;
+
+  } catch (err) {
+
+    newsTextEl.textContent = "Error loading news.";
+
+    console.error(err);
+
+  }
+
+}
+
+loadRSSNews();
+
+</script>
+
+</body>
+
+</html>
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>Stock Trading Dashboard</title>
+
+  <style>
+
+    * {
+
+      box-sizing: border-box;
+
+      font-family: 'Segoe UI', sans-serif;
+
+    }
+
+    body {
+
+      margin: 0;
+
+      background-color: #f2f4f8;
+
+    }
+
+    header {
+
+      background-color: #003B71;
+
+      color: white;
+
+      padding: 20px;
+
+      text-align: center;
+
+      font-size: 1.8rem;
+
+    }
+
+    .dashboard {
+
+      max-width: 1200px;
+
+      margin: 0 auto;
+
+      padding: 20px;
+
+      padding-bottom: 80px; /* room for news bar */
+
+    }
+
+    .grid-container {
+
+      display: grid;
+
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+
+      gap: 20px;
+
+    }
+
+    .card {
+
+      background-color: white;
+
+      border-radius: 12px;
+
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+      padding: 20px;
+
+    }
+
+    .card h2 {
+
+      color: #003B71;
+
+      margin-bottom: 16px;
+
+    }
+
+    form {
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 10px;
+
+    }
+
+    input, select, button {
+
+      padding: 10px;
+
+      border: 1px solid #ccc;
+
+      border-radius: 8px;
+
+      font-size: 1rem;
+
+    }
+
+    button {
+
+      background-color: #0072CE;
+
+      color: white;
+
+      cursor: pointer;
+
+      transition: background 0.3s;
+
+    }
+
+    button:hover {
+
+      background-color: #005A9E;
+
+    }
+
+    .results {
+
+      margin-top: 10px;
+
+      font-size: 0.95rem;
+
+      color: #003B71;
+
+      font-weight: bold;
+
+    }
+
+    /* News Ticker */
+
+    #news-bar {
+
+      position: fixed;
+
+      bottom: 0;
+
+      width: 100%;
+
+      background-color: #003B71;
+
+      color: white;
+
+      overflow: hidden;
+
+      white-space: nowrap;
+
+      padding: 10px 0;
+
+      font-size: 1rem;
+
+      z-index: 1000;
+
+    }
+
+    #news-text {
+
+      display: inline-block;
+
+      padding-left: 100%;
+
+      animation: scroll-left 30s linear infinite;
+
+    }
+
+    @keyframes scroll-left {
+
+      0% {
+
+        transform: translateX(0%);
+
+      }
+
+      100% {
+
+        transform: translateX(-100%);
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div class="dashboard">
+
+    <header>
+
+      <h1>Stock Trading Dashboard</h1>
+
+    </header>
+
+    <div class="grid-container">
+
+      <!-- Place Order Panel -->
+
+      <section class="card">
+
+        <h2>Place Order</h2>
+
+        <form id="placeOrderForm">
+
+          <input type="text" name="symbol" placeholder="Stock Symbol" required />
+
+          <select name="orderType" required>
+
+            <option value="BUY">BUY</option>
+
+            <option value="SELL">SELL</option>
+
+          </select>
+
+          <input type="number" name="quantity" placeholder="Quantity" min="1" required />
+
+          <input type="number" name="price" placeholder="Price" step="0.01" min="0.01" required />
+
+          <button type="submit">Place Order</button>
+
+        </form>
+
+      </section>
+
+      <!-- Execute Order Panel -->
+
+      <section class="card">
+
+        <h2>Execute Order</h2>
+
+        <form id="executeOrderForm">
+
+          <input type="text" name="symbol" placeholder="Stock Symbol" required />
+
+          <button type="submit">Execute Next Pending Order</button>
+
+        </form>
+
+      </section>
+
+      <!-- Cancel Order Panel -->
+
+      <section class="card">
+
+        <h2>Cancel Order</h2>
+
+        <form id="cancelOrderForm">
+
+          <input type="text" name="symbol" placeholder="Stock Symbol" required />
+
+          <input type="number" name="orderId" placeholder="Order ID" required />
+
+          <button type="submit">Cancel Order</button>
+
+        </form>
+
+      </section>
+
+      <!-- Portfolio Summary Panel -->
+
+      <section class="card">
+
+        <h2>Get Portfolio Summary</h2>
+
+        <form id="portfolioSummaryForm">
+
+          <input type="text" name="symbol" placeholder="Stock Symbol" required />
+
+          <button type="submit">Get Summary</button>
+
+        </form>
+
+        <div class="results" id="summaryResults">Summary will appear here</div>
+
+      </section>
+
+      <!-- Snapshot Panel -->
+
+      <section class="card">
+
+        <h2>Portfolio Snapshot</h2>
+
+        <button id="snapshotButton">Calculate Snapshot</button>
+
+        <div class="results" id="snapshotResults">Snapshot will appear here</div>
+
+      </section>
+
+    </div>
+
+  </div>
+
+  <!-- News Ticker -->
+
+  <div id="news-bar">
+
+    <div id="news-text">Loading financial news...</div>
+
+  </div>
+
+  <!-- Marketaux Script -->
+
+<script>
+
+async function loadRSSNews() {
+
+  const newsTextEl = document.getElementById('news-text');
+
+  const rssUrl = encodeURIComponent('https://news.google.com/rss/search?q=finance&hl=en-US&gl=US&ceid=US:en');
+
+  const proxyUrl = `https://api.allorigins.win/raw?url=${rssUrl}`;
+
+  try {
+
+    const res = await fetch(proxyUrl);
+
+    const text = await res.text();
+
+    const parser = new DOMParser();
+
+    const xml = parser.parseFromString(text, "application/xml");
+
+    const items = xml.querySelectorAll("item");
+
+    const headlines = Array.from(items).slice(0, 10).map(i => i.querySelector("title").textContent).join(" • ");
+
+    newsTextEl.textContent = headlines;
+
+  } catch (err) {
+
+    newsTextEl.textContent = "Error loading news.";
+
+    console.error(err);
+
+  }
+
+}
+
+loadRSSNews();
+
+</script>
+
+</body>
+
+</html>

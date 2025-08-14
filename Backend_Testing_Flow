@@ -1,0 +1,367 @@
+
+MARKET DATA VERIFICATION
+
+4. Get Available Stock Symbols
+Purpose: Verify market data API connectivity and retrieve list of valid tradeable symbols.
+Method: httpGET
+URL: https://marketdata.neueda.com/API/StockFeed/GetSymbolList
+Expected: HTTP 200 OK
+
+5. Get COP Stock Price (Real-time)
+Purpose: Retrieve the current market price for ConocoPhillips (symbol: cop).
+Method: httpGET
+URL: https://marketdata.neueda.com/API/StockFeed/GetStockPricesForSymbol/cop
+Expected: HTTP 200 OK
+
+6. Get CPGX Stock Price (Real-time)
+Purpose: Retrieve the current market price for CPGX (symbol: cpgx).
+Method: httpGET
+URL: https://marketdata.neueda.com/API/StockFeed/GetStockPricesForSymbol/cpgx
+Expected: HTTP 200 OK
+
+7. Get Historical Prices for a Symbol
+Purpose: Retrieve the N most recent prices for a symbol.
+Method: httpGET
+URL: https://marketdata.neueda.com/API/StockFeed/GetStockPricesForSymbol/cpgx?HowManyValues=5
+Expected: HTTP 200 OK
+
+8. Get Historical Prices at Specific Time
+Purpose: Retrieve the N most recent prices for a symbol at a given timestamp.
+Method: httpGET
+URL: https://marketdata.neueda.com/API/StockFeed/GetStockPricesForSymbol/cpgx?HowManyValues=5&WhatTime=06:04:29
+Expected: HTTP 200 OK
+
+9. Get Open, Close, Min, Max Prices for a Period
+Purpose: Retrieve OHLC stats for a symbol in a specific period.
+Method: httpGET
+URL: https://marketdata.neueda.com/API/StockFeed/GetOpenCloseMinMaxForSymbolAndPeriodNumber/cpgx?PeriodNumber=300
+Expected: HTTP 200 OK
+
+PHASE 2: PORTFOLIO MANAGEMENT
+2.1 Create Portfolio
+Method: POST
+URL: http://localhost:8082/api/portfolios?userId=user123&portfolioName=My Investment Portfolio&initialCash=10000.00
+Headers: None
+Body: None
+
+2.2 Get User's Portfolios
+Method: GET
+URL: http://localhost:8082/api/portfolios/user/user123
+Headers: None
+Body: None
+
+2.3 Get Specific Portfolio
+Method: GET
+URL: http://localhost:8082/api/portfolios/1
+Headers: None
+Body: None
+
+2.4 Update Portfolio Name
+Method: PUT
+URL: http://localhost:8082/api/portfolios/1?portfolioName=Updated Portfolio Name
+Headers: None
+Body: None
+
+2.5 Update Portfolio Value
+Method: PUT
+URL: http://localhost:8082/api/portfolios/1/update-value
+Headers: None
+Body: None
+
+2.6 Delete Portfolio
+Method: DELETE
+URL: http://localhost:8082/api/portfolios/1
+Headers: None
+Body: None
+
+
+PHASE 3: WATCHLIST MANAGEMENT
+3.1 Add to Watchlist
+Method: POST
+URL: http://localhost:8082/api/watchlist?portfolioId=1&symbol=AAPL&companyName=Apple Inc.
+Headers: None
+Body: None
+
+3.2 Get Portfolio Watchlist
+Method: GET
+URL: http://localhost:8082/api/watchlist/portfolio/1
+Headers: None
+Body: None
+
+3.3 Get User Watchlist
+Method: GET
+URL: http://localhost:8082/api/watchlist/user/user123
+Headers: None
+Body: None
+
+3.4 Remove from Watchlist by Portfolio and Symbol
+Method: DELETE
+URL: http://localhost:8082/api/watchlist/portfolio/1/symbol/AAPL
+Headers: None
+Body: None
+
+3.5 Remove from Watchlist by ID
+Method: DELETE
+URL: http://localhost:8082/api/watchlist/1
+Headers: None
+Body: None
+
+
+PHASE 4: ORDER MANAGEMENT & TRADING
+4.1 Create Buy Order
+Method: POST
+URL: http://localhost:8082/api/orders
+Headers: 
+Content-Type: application/json
+
+Body (raw JSON):
+{
+    "portfolioId": 1,
+    "symbol": "AAPL",
+    "orderType": "BUY",
+    "quantity": 10,
+    "price": 150.00
+}
+
+4.2 Execute Buy Order
+Method: PUT
+URL: http://localhost:8082/api/orders/1/execute
+Headers: None
+Body: None
+
+4.3 Create Sell Order
+Method: POST
+URL: http://localhost:8082/api/orders
+Headers: 
+Content-Type: application/json
+
+Body (raw JSON):
+{
+    "portfolioId": 1,
+    "symbol": "AAPL",
+    "orderType": "SELL",
+    "quantity": 5,
+    "price": 155.00
+}
+
+4.4 Execute Sell Order (after orders/{orderId})
+Method: PUT
+URL: http://localhost:8082/api/orders/2/execute
+Headers: None
+Body: None
+
+4.5 Get Portfolio Orders
+Method: GET
+URL: http://localhost:8082/api/orders/portfolio/1
+Headers: None
+Body: None
+
+4.6 Get User Orders
+Method: GET
+URL: http://localhost:8082/api/orders/user/user123
+Headers: None
+Body: None
+
+4.7 Cancel Order
+Method: PUT
+URL: http://localhost:8082/api/orders/1/cancel
+Headers: None
+Body: None
+
+PHASE 5: STOCK HOLDINGS
+5.1 Get Portfolio Stocks
+Method: GET
+URL: http://localhost:8082/api/stocks/portfolio/1
+Headers: None
+Body: None
+
+5.2 Get User Stocks
+Method: GET
+URL: http://localhost:8082/api/stocks/user/user123
+Headers: None
+Body: None
+
+5.3 Get Specific Stock Holding
+Method: GET
+URL: http://localhost:8082/api/stocks/portfolio/1/symbol/AAPL
+Headers: None
+Body: None
+
+5.4 Update Stock Current Price
+Method: PUT
+URL: http://localhost:8082/api/stocks/portfolio/1/symbol/AAPL/price?currentPrice=160.00
+Headers: None
+Body: None
+
+PHASE 6: TRANSACTION HISTORY
+6.1 Get Portfolio Transactions
+Method: GET
+URL: http://localhost:8082/api/transactions/portfolio/1
+Headers: None
+Body: None
+
+6.2 Get User Transactions
+Method: GET
+URL: http://localhost:8082/api/transactions/user/user123
+Headers: None
+Body: None
+
+6.3 Get Transactions by Symbol
+Method: GET
+URL: http://localhost:8082/api/transactions/portfolio/1/symbol/AAPL
+Headers: None
+Body: None
+
+6.4 Get Transactions by Date Range
+Method: GET
+URL: http://localhost:8082/api/transactions/portfolio/1/range?startDate=2025-01-01T00:00:00&endDate=2025-12-31T23:59:59
+Headers: None
+Body: None
+
+
+PHASE 7: ANALYTICS & PERFORMANCE
+7.1 Create Analytics Snapshot
+Method: POST
+URL: http://localhost:8082/api/analytics/portfolio/1/snapshot
+Headers: None
+Body: None
+
+7.2 Get Portfolio Snapshots
+Method: GET
+URL: http://localhost:8082/api/analytics/portfolio/1
+Headers: None
+Body: None
+
+7.3 Get User Snapshots
+Method: GET
+URL: http://localhost:8082/api/analytics/user/user123
+Headers: None
+Body: None
+
+7.4 Get Latest Snapshot
+Method: GET
+URL: http://localhost:8082/api/analytics/portfolio/1/latest
+Headers: None
+Body: None
+
+7.5 Get Today's Snapshot
+Method: GET
+URL: http://localhost:8082/api/analytics/portfolio/1/today
+Headers: None
+Body: None
+
+7.6 Refresh Snapshot
+Method: POST
+URL: http://localhost:8082/api/analytics/portfolio/1/refresh
+Headers: None
+Body: None
+
+7.7 Get Snapshots by Date Range
+Method: GET
+URL: http://localhost:8082/api/analytics/portfolio/1/range?startDate=2025-01-01T00:00:00&endDate=2025-12-31T23:59:59
+Headers: None
+Body: None
+
+7.8 Get Performance Metrics
+Method: GET
+URL: http://localhost:8082/api/analytics/portfolio/1/performance
+Headers: None
+Body: None
+
+7.9 Get Portfolio Summary
+Method: GET
+URL: http://localhost:8082/api/analytics/portfolio/1/summary
+Headers: None
+Body: None
+
+7.10 Get Profit/Loss History
+Method: GET
+URL: http://localhost:8082/api/analytics/portfolio/1/pnl-history?days=30
+Headers: None
+Body: None
+
+
+COMPLETE WORKFLOW TEST SEQUENCE
+Test Sequence 1: New User Setup
+1. GET https://marketdata.neueda.com/api/market-data/available-symbols
+2. POST http://localhost:8082/api/portfolios?userId=user123&portfolioName=Test Portfolio&initialCash=10000
+3. GET http://localhost:8082/api/portfolios/user/user123
+4. POST http://localhost:8082/api/watchlist?portfolioId=1&symbol=AAPL&companyName=Apple Inc.
+
+Test Sequence 2: Research & Buy
+1. GET https://marketdata.neueda.com/api/market-data/price/AAPL
+2. GET https://marketdata.neueda.com/api/market-data/symbols/AAPL
+3. POST http://localhost:8082/api/orders (BUY order JSON body)
+4. PUT http://localhost:8082/api/orders/1/execute
+
+Test Sequence 3: Monitor & Sell
+1. GET http://localhost:8082/api/stocks/portfolio/1
+2. GET http://localhost:8082/api/portfolios/1
+3. POST http://localhost:8082/api/orders (SELL order JSON body)
+4. PUT http://localhost:8082/api/orders/2/execute
+
+Test Sequence 4: Analytics & Review
+1. POST http://localhost:8082/api/analytics/portfolio/1/snapshot
+2. GET http://localhost:8082/api/analytics/portfolio/1/performance
+3. GET http://localhost:8082/api/transactions/portfolio/1
+4. GET http://localhost:8082/api/analytics/portfolio/1/pnl-history?days=30
+
+
+JSON BODY TEMPLATES
+Buy Order Template
+{
+    "portfolioId": 1,
+    "symbol": "AAPL",
+    "orderType": "BUY",
+    "quantity": 10,
+    "price": 150.00
+}
+
+Sell Order Template
+{
+    "portfolioId": 1,
+    "symbol": "AAPL",
+    "orderType": "SELL",
+    "quantity": 5,
+    "price": 155.00
+}
+
+
+ERROR TESTING SCENARIOS
+Insufficient Funds Test
+Method: POST
+URL: http://localhost:8082/api/orders
+Body: {
+    "portfolioId": 1,
+    "symbol": "AAPL",
+    "orderType": "BUY",
+    "quantity": 1000,
+    "price": 150.00
+}
+Then: PUT http://localhost:8082/api/orders/{orderId}/execute
+Expected: "Insufficient funds" error
+
+Insufficient Stock Test
+Method: POST
+URL: http://localhost:8082/api/orders
+Body: {
+    "portfolioId": 1,
+    "symbol": "AAPL",
+    "orderType": "SELL",
+    "quantity": 1000,
+    "price": 150.00
+}
+Then: PUT http://localhost:8082/api/orders/{orderId}/execute
+Expected: "Insufficient stock quantity" error
+
+Invalid Symbol Test
+Method: GET
+URL: https://marketdata.neueda.com/api/market-data/price/INVALID
+Expected: Not found or error response
+
+Portfolio Not Found Test
+Method: GET
+URL: http://localhost:8082/api/portfolios/99999
+Expected: 404 Not Found
+
+
