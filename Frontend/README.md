@@ -1,12 +1,45 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Quick Start
 
-Currently, two official plugins are available:
+```bash
+# Install dependencies
+npm install
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# Start development server
+npm run dev
+```
 
-## Expanding the ESLint configuration
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 📦 Tech Stack
+
+- **React 18** - UI Framework
+- **Vite** - Build tool & dev server
+- **Tailwind CSS** - Styling
+- **Lucide React** - Icons
+- **Recharts** - Charts & data visualization
+
+## 🛠️ Setup
+
+### Prerequisites
+- Node.js 16+ 
+- npm or yarn
+
+### Installation
+
+1. **Clone & Install**
+   ```bash
+   git clone <your-repo-url>
+   cd frontend
+   npm install
+   ```
+
+2. **Install Required Packages**
+   ```bash
+   npm install tailwindcss lucide-react recharts
+   ```
+
+3. **Run Development Server**
+   ```bash
+   npm run dev
+   ```
